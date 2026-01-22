@@ -62,18 +62,13 @@ The system combines AI vision models with human-in-the-loop validation to extrac
 - Tailwind CSS for responsive UI
 - Vanilla JavaScript for interactivity
 
-**DevOps**
-- Deployed on Fly.io
-- Environment-based configuration
-- File-drop architecture for async processing
-
 ---
 
 ## Architecture Highlights
 
 ### Vision Model Pipeline
 - Processes network diagram images through vision AI
-- Extracts nodes (devices) and links (connections) with ports
+- Extracts nodes (devices) and links (connections) with ports (if information is available)
 - Validates output against Pydantic schema
 
 ### Human-in-the-Loop Workflow
@@ -86,8 +81,6 @@ The system combines AI vision models with human-in-the-loop validation to extrac
 ### Graph Database Model
 - **Nodes**: Network devices (routers, switches, servers, etc.)
 - **Relationships**: `CONNECTED_TO` with port metadata
-- **Bidirectional links** for network equipment
-- **Intelligent port handling** based on device types
 
 ---
 
@@ -154,7 +147,7 @@ topo2graph_v0/
 
 ---
 
-## Technical Achievements
+## Engineering Highlights
 
 - **AI Integration**: Successfully integrated Hugging Face vision models for domain-specific extraction
 - **Data Validation**: Via Pydantic schema
