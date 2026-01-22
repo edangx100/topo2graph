@@ -3,7 +3,7 @@
 **Convert network‑topology image into a structured representation for Neo4j graph construction, using computer vision and intelligent validation.**
 
 <a name="demo"></a>
-🚀 **[Live Demo](https://topo2graph.fly.dev/)**  
+🚀 **[Live Demo, at desktop preferred](https://topo2graph.fly.dev/)**  
 Graph visualization is not included within demo; it is handled separately via [Neo4j AuraDB](https://neo4j.com/product/auradb/).
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
