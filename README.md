@@ -48,7 +48,7 @@ The system combines AI vision models with human-in-the-loop validation to extrac
 
 **Backend & Core**
 - Python 3.9+ with Pydantic for data validation
-- FastAPI + [Jinja2](https://www.packetcoders.io/an-introduction-to-jinja2-for-network-automation/) templating engine
+- FastAPI + [Jinja2](https://en.wikipedia.org/wiki/Jinja_(template_engine)) templating engine
 - Neo4j AuraDB for graph database storage
 
 **AI & Vision**
