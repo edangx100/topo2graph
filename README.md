@@ -126,15 +126,10 @@ Visit `http://127.0.0.1:8000/` to access the Web UI.
 
 ## Neo4j Graph Queries ( at Neo4j AuraDB )
 
-**Find all connections for a device:**
+**Find all connections:**
 ```cypher
-MATCH (n:Device {label: 'Switch1'})-[r]-(m) RETURN n, r, m
-```
-
-**View port mappings:**
-```cypher
-MATCH (a:Device)-[r:CONNECTED_TO]->(b:Device)
-RETURN a.label AS source, r.source_port, r.target_port, b.label AS target
+MATCH (n)-[r]->()
+RETURN n, r
 ```
 
 ---
