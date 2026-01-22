@@ -129,11 +129,6 @@ Visit `http://127.0.0.1:8000/` to access the Web UI.
 MATCH (n:Device {label: 'Switch1'})-[r]-(m) RETURN n, r, m
 ```
 
-**Impact analysis (downstream devices):**
-```cypher
-MATCH (n:Device {label: 'Core-Router'})-[*]->(m) RETURN m
-```
-
 **View port mappings:**
 ```cypher
 MATCH (a:Device)-[r:CONNECTED_TO]->(b:Device)
