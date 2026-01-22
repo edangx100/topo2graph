@@ -158,9 +158,8 @@ topo2graph_v0/
 
 - **AI Integration**: Successfully integrated Hugging Face vision models for domain-specific extraction
 - **Data Validation**: Comprehensive Pydantic schema with blocking errors and non-blocking warnings
-- **Graph Database**: Implemented intelligent bidirectional relationship mapping for network equipment
-- **Production Ready**: Deployed with environment-based config and persistent storage
-- **Human-in-the-Loop**: Built intuitive web UI for validation workflows
+- **Graph Database**: Implemented relationship mapping for network equipment
+- **Human-in-the-Loop**: Built web UI for validation workflows
 
 ---
 
