@@ -56,6 +56,8 @@ The system combines AI vision models with human-in-the-loop validation to extrac
 - Qwen/Qwen3-VL-8B-or 32B Instruct vision model
 - Custom prompt engineering for topology extraction
 
+> **Note**: As newer and more capable Qwen VL models are released, it is anticipated that more complex network topology diagrams can be better handled with improved accuracy and detail extraction.
+
 **Frontend**
 - Tailwind CSS for responsive UI
 - Vanilla JavaScript for interactivity
