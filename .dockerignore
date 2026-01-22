@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv/
+ENV/
+
+# Data directories (these should be on volumes, not baked into image)
+inbox/
+processed/
+approved/
+image/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files (secrets should use fly secrets)
+.env
+.env.*
+
+# Documentation and misc
+*.md
+*.txt
+!requirements.txt
+LICENSE
+
+# Tests
+tests/
+pytest_cache/
+.coverage
+htmlcov/

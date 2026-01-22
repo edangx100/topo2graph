@@ -1,0 +1,148 @@
+<!--
+    Approved template - success confirmation page after approving a topology.
+    Shows:
+    - Success icon and message
+    - Summary of the approval (original filename, approved filename, counts)
+    - File paths where data was written
+    - Link back to file list
+-->
+{% extends "base.html" %}
+
+{% block title %}Approved - Topo2Graph{% endblock %}
+
+{% block content %}
+<!-- Centered card for success message -->
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+
+        <!-- Success icon - green checkmark in circle -->
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+
+        <!-- Success heading and subheading -->
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Topology Approved</h1>
+        <p class="text-gray-600 mb-6">The topology has been validated and saved.</p>
+
+        <!--
+            Summary details card
+            Shows: original filename, approved filename (with timestamp),
+            node count, and link count
+        -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <dl class="space-y-2 text-sm">
+                <!-- Original filename -->
+                <div class="flex justify-between">
+                    <dt class="text-gray-500">Original file:</dt>
+                    <dd class="font-medium text-gray-900">{{ filename }}</dd>
+                </div>
+                <!-- New timestamped filename in approved/ -->
+                <div class="flex justify-between">
+                    <dt class="text-gray-500">Approved as:</dt>
+                    <dd class="font-mono text-green-600">{{ approved_name }}</dd>
+                </div>
+                <!-- Node count from the topology -->
+                <div class="flex justify-between">
+                    <dt class="text-gray-500">Nodes:</dt>
+                    <dd class="font-medium text-gray-900">{{ node_count }}</dd>
+                </div>
+                <!-- Link count from the topology -->
+                <div class="flex justify-between">
+                    <dt class="text-gray-500">Links:</dt>
+                    <dd class="font-medium text-gray-900">{{ link_count }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- File path information -->
+        <div class="space-y-3">
+            <!-- Where the approved JSON was saved -->
+            <p class="text-sm text-gray-500">
+                The approved file has been saved to <code class="bg-gray-100 px-1 rounded">approved/{{ approved_name }}</code>
+            </p>
+            <!-- Where the original was moved to -->
+            <p class="text-sm text-gray-500">
+                The original has been moved to <code class="bg-gray-100 px-1 rounded">processed/{{ filename }}</code>
+            </p>
+        </div>
+
+        <!--
+            Neo4j sync status block
+            Shows the result of the best-effort sync attempt after approval.
+            Three possible states based on neo4j_status variable:
+            - "success": Green checkmark with sync stats (nodes, links, elapsed time)
+            - "error": Warning icon with error message (connection, auth, or query failure)
+            - "not_configured": Info icon prompting user to set env vars
+            Sync errors don't block approval - the file is still saved to approved/
+        -->
+        <div class="mt-6 bg-gray-50 rounded-lg p-4 text-left">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Neo4j Sync</h3>
+
+            {% if neo4j_status == "success" %}
+            <!-- Success: topology was synced to Neo4j via idempotent MERGE -->
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <!-- Checkmark icon -->
+                    <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div class="ml-2">
+                    <p class="text-sm text-green-700">Synced to Neo4j</p>
+                    {% if neo4j_stats %}
+                    <!-- neo4j_stats is a SyncStats dataclass with counts and timing -->
+                    <p class="text-xs text-gray-500 mt-1">
+                        {{ neo4j_stats.nodes_synced }} nodes, {{ neo4j_stats.links_synced }} links in {{ neo4j_stats.elapsed_seconds }}s
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% elif neo4j_status == "error" %}
+            <!-- Error: sync was attempted but failed (approval still succeeded) -->
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <!-- Warning triangle icon -->
+                    <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="ml-2">
+                    <p class="text-sm text-red-700">Sync error</p>
+                    <!-- neo4j_error contains the exception message -->
+                    <p class="text-xs text-gray-500 mt-1">{{ neo4j_error }}</p>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Not configured: NEO4J_* env vars not set, sync skipped -->
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <!-- Info circle icon -->
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="ml-2">
+                    <p class="text-sm text-gray-500">Not configured</p>
+                    <p class="text-xs text-gray-400 mt-1">Set NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD to enable sync</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Button to go back to file list -->
+        <div class="mt-8">
+            <a href="/" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <!-- List icon -->
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                Review More Files
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

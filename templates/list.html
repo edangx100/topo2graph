@@ -1,0 +1,152 @@
+<!--
+    List template - displays pending JSON files from inbox/
+    Shows files awaiting human review with file metadata.
+    Links to review page for each file.
+-->
+{% extends "base.html" %}
+
+{% block title %}Pending Files - Topo2Graph Review{% endblock %}
+
+{% block content %}
+<!-- Main card containing the file list -->
+<div class="bg-white rounded-lg shadow-md p-6">
+    <!-- Header with title, upload button, and file count badge -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Pending Files</h1>
+        <div class="flex items-center space-x-4">
+            <!--
+                NEO4J STATUS INDICATOR
+                Shows connection status to Neo4j database:
+                - connected (green): Successfully connected to Neo4j
+                - error (red): Configuration exists but connection failed
+                - not_configured (gray): NEO4J_* env vars not set
+                Hover over the badge to see the full status message.
+            -->
+            {% if neo4j_status.status == "connected" %}
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800" title="{{ neo4j_status.message }}">
+                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                Neo4j connected
+            </span>
+            {% elif neo4j_status.status == "error" %}
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800" title="{{ neo4j_status.message }}">
+                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Neo4j error
+            </span>
+            {% else %}
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-600" title="{{ neo4j_status.message }}">
+                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                Neo4j not configured
+            </span>
+            {% endif %}
+            <!-- Upload button -->
+            <a href="/upload" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Upload Image
+            </a>
+            <!-- File count badge -->
+            <span class="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
+                {{ files|length }} file(s) in inbox
+            </span>
+        </div>
+    </div>
+
+    <!-- File table - shown when files exist -->
+    {% if files %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Filename
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Size
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Modified
+                    </th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Loop through files passed from the web.py route -->
+                {% for file in files %}
+                <tr class="hover:bg-gray-50">
+                    <!-- Filename with document icon -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <!-- SVG document icon -->
+                            <svg class="h-5 w-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span class="text-sm font-medium text-gray-900">{{ file.name }}</span>
+                        </div>
+                    </td>
+                    <!-- File size in KB -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ "%.1f"|format(file.size / 1024) }} KB
+                    </td>
+                    <!-- Last modified timestamp -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ file.modified.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </td>
+                    <!-- Review button - links to /review/{filename} -->
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/review/{{ file.name }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty state - shown when inbox is empty -->
+    {% else %}
+    <div class="text-center py-12">
+        <!-- Empty inbox icon -->
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No pending files</h3>
+        <p class="mt-1 text-sm text-gray-500">
+            Drop JSON files into the <code class="bg-gray-100 px-1 rounded">inbox/</code> directory to begin reviewing.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Workflow diagram - shows the file processing pipeline -->
+<div class="mt-6 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-3">Workflow</h2>
+    <!-- Visual representation: inbox -> Review -> approved + processed -->
+    <div class="flex items-center space-x-4 text-sm">
+        <div class="flex items-center">
+            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-medium">inbox/</span>
+            <span class="text-gray-400 mx-2">-></span>
+        </div>
+        <div class="flex items-center">
+            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">Review</span>
+            <span class="text-gray-400 mx-2">-></span>
+        </div>
+        <div class="flex items-center">
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded font-medium">approved/</span>
+            <span class="text-gray-400 mx-2">+</span>
+        </div>
+        <div class="flex items-center">
+            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded font-medium">processed/</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

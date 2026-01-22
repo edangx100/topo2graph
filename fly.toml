@@ -1,0 +1,28 @@
+# Fly.io configuration for Topo2Graph
+# See https://fly.io/docs/reference/configuration/ for reference
+
+app = "topo2graph"
+primary_region = "sjc"  # San Jose - change to your preferred region
+
+[build]
+  # Uses Dockerfile in project root
+
+[env]
+  # DATA_DIR points to the mounted volume for persistent storage
+  DATA_DIR = "/app/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[mounts]
+  source = "topo_data"
+  destination = "/app/data"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

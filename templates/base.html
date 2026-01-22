@@ -1,0 +1,57 @@
+<!--
+    Base template for Topo2Graph Review UI
+    All pages extend this template to inherit the common layout.
+    Uses Tailwind CSS via CDN for styling.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page title: child templates can override this block -->
+    <title>{% block title %}Topo2Graph Review{% endblock %}</title>
+
+    <!-- Tailwind CSS via CDN - provides utility-first CSS framework -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom styles for the JSON editor textarea -->
+    <style>
+        .json-textarea {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+    </style>
+
+    <!-- Extension point for child templates to add CSS or meta tags -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Navigation bar - present on all pages -->
+    <nav class="bg-indigo-600 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo/home link -->
+                <a href="/" class="text-xl font-bold">Topo2Graph Review</a>
+                <!-- Tagline -->
+                <span class="text-indigo-200 text-sm">Human-in-the-Loop Topology Validation</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content area - child templates inject content here -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 text-sm py-4">
+        Topo2Graph - Network Topology Extraction and Validation
+    </footer>
+
+    <!-- Extension point for child templates to add JavaScript -->
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
