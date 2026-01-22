@@ -174,3 +174,7 @@ topo2graph_v0/
 **Live Application**: [https://topo2graph.fly.dev/](https://topo2graph.fly.dev/)
 
 Try uploading a network diagram or review sample topologies in the inbox.
+
+**Sample Images**: The images below are sample network topology images that users can use when trying out the Live Demo in a desktop environment:
+- `image/topo1.jpg`
+- `image/topo2.png`
